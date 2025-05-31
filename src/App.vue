@@ -1,6 +1,9 @@
 <template>
-  <h1>User Directory</h1>
+  <div class="app_Container">
+  
     <router-view />
+  </div>
+  
 </template>
 
 <script>
@@ -15,12 +18,25 @@ export default {
 </script>
 
 <style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+*{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+   font-family: "Ancizar Serif", serif;
+  font-optical-sizing: auto;
+  font-weight: 600;
+  font-style: normal;
+}
+
+.app_Container h1{
+  font-size: 4rem;
   text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
+}
+
+@media screen and (max-width:500px) {
+  .app_Container h1{
+  font-size: 2.5rem;
+  text-align: center;
+}
 }
 </style>
