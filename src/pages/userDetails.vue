@@ -16,7 +16,9 @@
         <p><strong>Address:</strong> {{ user.address?.address || '' }}, {{ user.address?.city || '' }}</p>
       </div>
       <button @click="$router.back()" class="back-btn">← Back</button>
+      
     </div>
+    
   </div>
 
   <div v-else-if="error" class="error-msg">{{ error }}</div>
@@ -52,12 +54,14 @@ export default {
   padding: 2rem 1rem;
   background: #f4f7f8;
   box-sizing: border-box;
+  height: 100vh;
 }
 
 .user-card {
   background: white;
   max-width: 400px;
   width: 100%;
+  height: fit-content;
   border-radius: 15px;
   box-shadow: 0 12px 25px rgba(0,0,0,0.1);
   padding: 2rem;

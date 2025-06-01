@@ -2,6 +2,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import Home from '@/pages/homePage.vue'
 import UserDetails from '@/pages/userDetails.vue'
+import EditUser from "@/pages/EditUser.vue";
 
 const routes = [
   {
@@ -14,6 +15,11 @@ const routes = [
     name: 'UserDetails',
     component: UserDetails,
     props: true
+  },
+    {
+    path: "/edit/:id",
+    name: "EditUser",
+    component: EditUser
   }
 ]
 

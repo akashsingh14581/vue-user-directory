@@ -1,40 +1,48 @@
 <template>
   <div>
-  <div :class="{ dark: isDarkMode }">
-  <h1>User Directory</h1>
-   <button @click="toggleDarkMode" class="dark-toggle-btn">
-      {{ isDarkMode ? '🌞 Light Mode' : '🌙 Dark Mode' }}
-    </button>
-    <!-- search user -->
-    <input
-      type="text"
-      v-model="searchQuery"
-      placeholder="🔍 search user by name or email"
-      class="searchBtn"
-    />
-    <div v-if="showErr" style="color: red; font-weight: 600; font-size: 2rem">
-      ⚠️ Error: {{ showErr.message }}
-    </div>
-    <div v-else>
-      <div v-if="filterUsers.length > 0" class="user_Card_Container">
-        <div v-for="user in filterUsers" :key="user.id" class="user_Card">
-          <div class="user_Image_container">
-            <img
-              :src="`https://randomuser.me/api/portraits/${
-                user.gender === 'female' ? 'women' : 'men'
-              }/${user.id}.jpg`"
-              alt="User Image"
-            />
-          </div>
-
-          <h2>{{ user.firstName }} {{ user.lastName }}</h2>
-          <p>{{ user.email }}</p>
-          <button @click="getUserDetails(user)">view user details</button>
-        </div>
+    <div :class="{ dark: isDarkMode }">
+      <h1>User Directory</h1>
+      <button @click="toggleDarkMode" class="dark-toggle-btn">
+        {{ isDarkMode ? "🌞 Light Mode" : "🌙 Dark Mode" }}
+      </button>
+      <!-- search user -->
+      <input
+        type="text"
+        v-model="searchQuery"
+        placeholder="🔍 search user by name or email"
+        class="searchBtn"
+      />
+      <div
+        v-if="showErr"
+        style="color: red; font-weight: 600; font-size: 2rem; text-align: center"
+      >
+        ⚠️ Error: {{ showErr }}
       </div>
-      <div v-else class="no_Data">😕 No users found matching "{{ searchQuery }}"</div>
+      <div v-else>
+        <div v-if="filterUsers.length > 0" class="user_Card_Container">
+          <div v-for="user in filterUsers" :key="user.id" class="user_Card">
+            <div class="user_Image_container">
+              <img
+                :src="`https://randomuser.me/api/portraits/${
+                  user.gender === 'female' ? 'women' : 'men'
+                }/${user.id}.jpg`"
+                alt="User Image"
+              />
+            </div>
+
+            <h2>{{ user.firstName }} {{ user.lastName }}</h2>
+            <p>{{ user.email }}</p>
+            <p class="role">{{ user.company.title }}</p>
+            <button @click="getUserDetails(user)">view user details</button>
+            <div class="user_Actions">
+              <button @click="editUser(user)">✏️ Edit</button>
+              <button @click="deleteUser(user.id)">🗑️ Delete</button>
+            </div>
+          </div>
+        </div>
+        <div v-else class="no_Data">😕 No users found matching "{{ searchQuery }}"</div>
+      </div>
     </div>
-  </div>
   </div>
 </template>
 <script>
@@ -45,7 +53,7 @@ export default {
       searchQuery: "",
       users: [],
       showErr: null,
-       isDarkMode: JSON.parse(localStorage.getItem('darkMode')) || false,
+      isDarkMode: JSON.parse(localStorage.getItem("darkMode")) || false,
     };
   },
   computed: {
@@ -62,10 +70,11 @@ export default {
     },
   },
   methods: {
+    
     toggleDarkMode() {
-    this.isDarkMode = !this.isDarkMode;
-    localStorage.setItem('darkMode', JSON.stringify(this.isDarkMode));
-  },
+      this.isDarkMode = !this.isDarkMode;
+      localStorage.setItem("darkMode", JSON.stringify(this.isDarkMode));
+    },
     async fetchUsers() {
       try {
         const response = await axios.get("https://dummyjson.com/users");
@@ -74,9 +83,22 @@ export default {
         this.showErr = err.message;
       }
     },
-  getUserDetails(user) {
-    this.$router.push({ name: 'UserDetails', params: { id: user.id } });
-  }
+    getUserDetails(user) {
+      //  this.$router.push(`/user/${user.id}`);   Jab tum is method ko kisi button click pe call karte ho, tumhara app turant /user/ID wale page pe chala jaata hai.
+      this.$router.push({ name: "UserDetails", params: { id: user.id } }); //Named Routes Syntax (optional) Agar tumne route define kiya hai name: "UserDetails", toh aise bhi likh sakte ho: Ye cleaner hota hai, especially jab tum route ke path change karte ho future mein.
+    },
+    editUser(user) {
+      this.$router.push({ name: "EditUser", params: { id: user.id } });
+    },
+
+    deleteUser(id) {
+      const confirmed = confirm("Are you sure you want to delete this user?");
+      if (!confirmed) return;
+
+      this.users = this.users.filter((user) => user.id !== id);
+      // optional: call API delete if backend exists
+      // await axios.delete(`https://dummyjson.com/users/${id}`);
+    },
   },
   created() {
     this.fetchUsers();
@@ -96,7 +118,12 @@ export default {
   box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
   padding: 1rem;
   text-align: center;
+  border-radius: 10px;
+  &:hover {
+    box-shadow: rgba(0, 0, 0, 0.1) 0px 10px 50px;
+  }
 }
+
 .user_Card button {
   padding: 0.5rem 1rem;
   background-color: oklch(70.7% 0.165 254.624);
@@ -105,6 +132,7 @@ export default {
   color: white;
   text-transform: capitalize;
   margin-top: 10px;
+  cursor: pointer;
 }
 .user_Image_container {
   padding: 0.5rem;
@@ -131,10 +159,10 @@ export default {
   border: 2px solid oklch(70.7% 0.165 254.624);
   outline: yellow;
 }
-.no_Data{
-    text-align: center;
-    font-size: 2rem;
-    color: oklch(70.7% 0.165 254.624);
+.no_Data {
+  text-align: center;
+  font-size: 2rem;
+  color: oklch(70.7% 0.165 254.624);
 }
 
 /* dark mode */
@@ -176,7 +204,29 @@ export default {
   font-weight: 600;
 }
 
+.user_Actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+}
+.user_Actions button {
+  padding: 0.4rem 0.8rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  color: white;
+}
+.user_Actions button:first-child {
+  background-color: #007bff;
+}
+.user_Actions button:last-child {
+  background-color: #dc3545;
+}
 
+.role{
+  border-bottom: 1px solid #dadada;
+  padding: 5px;
+}
 
 @media screen and (max-width: 500px) {
   .searchBtn {
